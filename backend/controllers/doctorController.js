@@ -105,32 +105,45 @@ const appointmentComplete = async(req,res)=>{
 
 
 
-//api to cancek  appointment  for doctor panel
-const appointmentCancel= async(req,res)=>{
-  
-  try{
+// API to cancel appointment from doctor panel
+const appointmentCancel = async (req, res) => {
+  try {
+    const docId = req.docId;
+    const { appointmentId } = req.body;
 
-    const docId = req.docId
-    const {appointmentId} = req.body
+    const appointmentData = await appointmentModel.findById(appointmentId);
 
-    const appointmentData = await appointmentModel.findById(appointmentId)
-
-    if(appointmentData && appointmentData.docId === docId)
-    {
-      await appointmentModel.findByIdAndUpdate(appointmentId,{cancelled:true})
-      return res.json({success:true,message:"Appointment Cancelled"})
-    }else{
-      return res.json({success:false,message:"Cancellation failed"})
-
+    if (!appointmentData) {
+      return res.json({ success: false, message: "Appointment not found" });
     }
-    
-  }catch(error){
 
-    console.error(error)
-    res.json({success:false,message:error.message})
+    // Check if this appointment belongs to the logged-in doctor
+    if (String(appointmentData.docId) !== String(docId)) {
+      return res.json({ success: false, message: "Unauthorized action" });
+    }
 
+    // Mark appointment as cancelled
+    await appointmentModel.findByIdAndUpdate(appointmentId, { cancelled: true });
+
+    // Release the doctor's slot
+    const { slotDate, slotTime } = appointmentData;
+    const doctorData = await doctorModel.findById(docId);
+
+    if (doctorData?.slots_booked?.[slotDate]) {
+      doctorData.slots_booked[slotDate] = doctorData.slots_booked[slotDate].filter(
+        (time) => time !== slotTime
+      );
+
+      await doctorModel.findByIdAndUpdate(docId, { slots_booked: doctorData.slots_booked });
+    }
+
+    return res.json({ success: true, message: "Appointment Cancelled" });
+  } catch (error) {
+    console.error(error);
+    res.json({ success: false, message: error.message });
   }
-}
+};
+
 
 //API to get dashboard data for doctor panel
 const doctorDashboard = async (req, res) => {
@@ -205,4 +218,36 @@ const updateDoctorProfile = async(req,res)=>{
 
 }
 
-export {changeAvailablity,doctorsList,loginDoctor,appointmentsDoctor,appointmentComplete,appointmentCancel,doctorDashboard,doctorProfile,updateDoctorProfile}
+
+// API to clear all booked slots for a doctor
+const clearDoctorSlots = async (req, res) => {
+  try {
+    const { docId } = req.body;
+
+    if (!docId) {
+      return res.json({ success: false, message: "Doctor ID is required" });
+    }
+
+    const doctorData = await doctorModel.findById(docId);
+
+    if (!doctorData) {
+      return res.json({ success: false, message: "Doctor not found" });
+    }
+
+    // Set slots_booked to an empty object
+    doctorData.slots_booked = {};
+    await doctorData.save();
+
+    return res.json({
+      success: true,
+      message: "All booked slots have been cleared for this doctor",
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.json({ success: false, message: error.message });
+  }
+};
+
+
+export {changeAvailablity,doctorsList,loginDoctor,appointmentsDoctor,appointmentComplete,appointmentCancel,doctorDashboard,doctorProfile,updateDoctorProfile,clearDoctorSlots}
