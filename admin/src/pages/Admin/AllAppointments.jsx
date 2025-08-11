@@ -32,7 +32,7 @@ const AllAppointments = () => {
           <p>Fees</p>
           <p>action</p>
         </div>
-        {
+        {appointments.length > 0 ? (
           appointments.map((item,index)=>(
             <div className='flex flex-wrap justify-between max-sm:gap-2 sm:grid sm:grid-cols-[0.5fr_3fr_1fr_3fr_3fr_1fr_1fr] items-center text-gray-500 py-3 px-6 border-b hover:bg-gray-200' key={index}>
 
@@ -48,7 +48,7 @@ const AllAppointments = () => {
                 <img className='w-8 rounded-full' src={item.docData.image}  alt="" />  <p>{item.docData.name}</p>
               </div>
 
-              <p>${item.amount}</p>
+              <p>&#8377;{item.amount}</p>
               {
                 item.cancelled
                 ? <p className='text-red-400 text-xs font-medium'>Cancelled</p>
@@ -58,7 +58,7 @@ const AllAppointments = () => {
 
               }
             </div>
-          ))
+          ))):(<p className="text-sm text-gray-400 p-4">Not Appointment Booked</p>)
         }
       </div>
       

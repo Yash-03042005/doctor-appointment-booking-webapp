@@ -106,6 +106,10 @@ const Appointment = () => {
 
       const slotDate = day +"_"+ month +"_" + year
 
+      if(!slotTime){
+        return toast.error("Please Select a Slot ");
+      }
+
       const {data} = await axios.post(backendUrl + '/api/user/book-appointment',{docId,slotDate,slotTime},{headers:{token}})
 
       if(data.success){
