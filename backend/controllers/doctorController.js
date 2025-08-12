@@ -76,32 +76,46 @@ const appointmentsDoctor = async(req,res)=>{
     }
 }
 
-//api to mark appointment completed for doctor panel
-const appointmentComplete = async(req,res)=>{
-  
-  try{
 
-    const docId = req.docId
-    const {appointmentId} = req.body
+// API to mark appointment completed for doctor panel
+const appointmentComplete = async (req, res) => {
+  try {
+    const docId = req.docId;
+    const { appointmentId } = req.body;
 
-    const appointmentData = await appointmentModel.findById(appointmentId)
+    const appointmentData = await appointmentModel.findById(appointmentId);
 
-    if(appointmentData && appointmentData.docId === docId)
-    {
-      await appointmentModel.findByIdAndUpdate(appointmentId,{isCompleted:true})
-      return res.json({success:true,message:"Appointment Completed"})
-    }else{
-      return res.json({success:false,message:"Mark failed"})
-
+    if (!appointmentData) {
+      return res.json({ success: false, message: "Appointment not found" });
     }
 
-  }catch(error){
+    // Check if the appointment belongs to the logged-in doctor
+    if (String(appointmentData.docId) !== String(docId)) {
+      return res.json({ success: false, message: "Unauthorized action" });
+    }
 
-    console.error(error)
-    res.json({success:false,message:error.message})
+    // Mark appointment as completed
+    await appointmentModel.findByIdAndUpdate(appointmentId, { isCompleted: true });
 
+    // Release the doctor's slot (same logic as cancel API)
+    const { slotDate, slotTime } = appointmentData;
+    const doctorData = await doctorModel.findById(docId);
+
+    if (doctorData?.slots_booked?.[slotDate]) {
+      doctorData.slots_booked[slotDate] = doctorData.slots_booked[slotDate].filter(
+        (time) => time !== slotTime
+      );
+
+      await doctorModel.findByIdAndUpdate(docId, { slots_booked: doctorData.slots_booked });
+    }
+
+    return res.json({ success: true, message: "Appointment Completed & Slot Released" });
+
+  } catch (error) {
+    console.error(error);
+    res.json({ success: false, message: error.message });
   }
-}
+};
 
 
 
@@ -198,25 +212,28 @@ const doctorProfile = async(req,res)=>{
   }
 }
 
-//api to update the doctor profile data from doctor panel
+// api to update the doctor profile data from doctor panel
+const updateDoctorProfile = async (req, res) => {
+  try {
+    const docId = req.docId;
+    const { fees, available, address, name, about } = req.body;
 
-const updateDoctorProfile = async(req,res)=>{
+    await doctorModel.findByIdAndUpdate(docId, {
+      fees,
+      address,
+      available,
+      name,
+      about
+    });
 
-  try{
-    
-    const docId = req.docId
-    const {fees,available,address} = req.body
-
-    await doctorModel.findByIdAndUpdate(docId,{fees,address,available})
-
-    res.json({success:true,message:"Profile Updated Successfully"})
-
-  }catch(error){
-    console.error(error)
-    res.json({success:false,message:error.message})
+    res.json({ success: true, message: "Profile Updated Successfully" });
+  } catch (error) {
+    console.error(error);
+    res.json({ success: false, message: error.message });
   }
+};
 
-}
+
 
 
 // API to clear all booked slots for a doctor

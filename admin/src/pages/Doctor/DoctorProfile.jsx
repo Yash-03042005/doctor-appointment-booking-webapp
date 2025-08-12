@@ -17,9 +17,11 @@ const DoctorProfile = () => {
     try{
 
       const updateData = {
-        address:profileData.address,
-        fees:profileData.fees,
-        available:profileData.available
+        name: profileData.name,
+        about: profileData.about,
+        address: profileData.address,
+        fees: profileData.fees,
+        available: profileData.available
       }
 
       const {data} = await axios.post(backendUrl_doctor + '/api/doctor/upadate-profile',updateData,{headers:{dToken}})
@@ -58,7 +60,16 @@ const DoctorProfile = () => {
         <div className='flex-1 border border-stone-100 rounded-lg  p-8 py-7 bg-white '>
           {/*----------------Doc Info: name,degree, experience----------------*/ }
 
-          <p className='flex items-center gap-2 text-3xl font-medium text-gray-700'>{profileData.name}</p>
+          <p className='flex items-center gap-2 text-3xl font-medium text-gray-700'>
+            {isEdit ? 
+              <input 
+                type="text" 
+                className="bg-gray-100 border border-gray-300 rounded px-2 py-1"
+                value={profileData.name} 
+                onChange={(e)=>setProfileData(prev=>({...prev,name:e.target.value}))} 
+              /> 
+              : profileData.name}
+          </p>
           <div className='flex items-center gap-2 mt-1 text-gray-600'>
             <p>{profileData.degree} - {profileData.speciality}</p>
             <button className='py-0.5 px-2 border text-xs rounded-full'>{profileData.experience}</button>
@@ -68,21 +79,48 @@ const DoctorProfile = () => {
 
           <div>
             <p className='flex  items-center gap-1 text-sm font-medium text-neutral-800 mt-3 '>About:</p>
-            <p className='text-sm text-gray-600 max-w-[700px] mt-1'>
-              {profileData.about}
-            </p>
+            {isEdit ? 
+              <textarea 
+                className='text-sm text-gray-600 max-w-[700px] mt-1 w-full bg-gray-100 border border-gray-300 rounded p-2' 
+                value={profileData.about} 
+                onChange={(e)=>setProfileData(prev=>({...prev,about:e.target.value}))}>
+              </textarea> 
+              : <p className='text-sm text-gray-600 max-w-[700px] mt-1'>{profileData.about}</p>}
           </div>
 
           <p className='text-gray-600 font-medium mt-4'>
-            Appointment Fees : <span className='text-gray-800'>{isEdit ? <input type="number" value={profileData.fees} onChange={(e)=>setProfileData(prev=> ({...prev,fees:e.target.value}))} /> :profileData.fees}</span>
+            Appointment Fees : <span className='text-gray-800'>
+              {isEdit ? 
+                <input 
+                  type="number" 
+                  className="bg-gray-100 border border-gray-300 rounded px-2 py-1"
+                  value={profileData.fees} 
+                  onChange={(e)=>setProfileData(prev=> ({...prev,fees:e.target.value}))} 
+                /> 
+                : profileData.fees}
+            </span>
           </p>
 
           <div className='flex gap-2 py-2'>
             <p>Address:</p>
             <p className='text-sm'>
-              {isEdit ? <input type="text" onChange={(e)=>setProfileData(prev=>({...prev,address:{...prev.address,line1:e.target.value}}))} value={profileData.address.line1} /> :profileData.address.line1}
+              {isEdit ? 
+                <input 
+                  type="text" 
+                  className="bg-gray-100 border border-gray-300 rounded px-2 py-1 mb-1"
+                  onChange={(e)=>setProfileData(prev=>({...prev,address:{...prev.address,line1:e.target.value}}))} 
+                  value={profileData.address.line1} 
+                /> 
+                : profileData.address.line1}
               <br />
-              {isEdit ? <input type="text" onChange={(e)=>setProfileData(prev=>({...prev,address:{...prev.address,line2:e.target.value}}))} value={profileData.address.line2} /> :profileData.address.line2}
+              {isEdit ? 
+                <input 
+                  type="text" 
+                  className="bg-gray-100 border border-gray-300 rounded px-2 py-1"
+                  onChange={(e)=>setProfileData(prev=>({...prev,address:{...prev.address,line2:e.target.value}}))} 
+                  value={profileData.address.line2} 
+                /> 
+                : profileData.address.line2}
             </p>
           </div>
 
