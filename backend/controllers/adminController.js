@@ -154,30 +154,59 @@ const appointmentCancel = async(req,res)=>{
 
   }
 }
+// api to get dashboard data for admin panel
+const adminDashboard = async (req, res) => {
+  try {
+    const doctors = await doctorModel.find({});
+    const appointments = await appointmentModel.find({});
+    const users = await userModel.find({});
 
-//api to get dashboard data for admin panel
-const adminDashboard = async(req,res)=>{
+    const dashData = {
+      doctors: doctors.length,
+      appointments: appointments.length,
+      registeredUsers: users.length,
+      latestAppointments: [...appointments].reverse().slice(0, 5)
+    };
 
-    try{
-        const doctors = await doctorModel.find({})
-        const appointments = await appointmentModel.find({})
-        const users = await userModel.find({})
+    res.json({ success: true, dashData });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: error.message });
+  }
+};
 
-        const dashData = {
-            doctors:doctors.length,
-            appointments:appointments.length,
-            patients:users.length,
-            latestAppointments:appointments.reverse().slice(0,5)
-        }
 
-        res.json({success:true,dashData})
-    }catch(error){
 
-        console.log(error)
-        res.json({success:false,message:error.message})
+const deleteDoctor = async (req, res) => {
+  try {
+    const { docId } = req.body;
 
+    const doctor = await doctorModel.findById(docId);  // ✅ Correct usage
+
+    if (!doctor) {
+      return res.json({ success: false, message: "Doctor does not exist" });
     }
-}
+
+    await doctorModel.findByIdAndDelete(docId);
+
+    res.json({ success: true, message: "Doctor deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.json({ success: false, message: error.message });
+  }
+};
 
 
-export {addDoctor,loginAdmin,allDoctors,appointmentsAdmin,appointmentCancel,adminDashboard}
+const allUsers = async (req, res) => {
+  try {
+    const users = await userModel.find({}).select("-password");
+    res.json({ success: true, users });
+  } catch (error) {
+    console.error(error);
+    res.json({ success: false, message: error.message });
+  }
+};
+
+
+
+export {addDoctor,loginAdmin,allDoctors,appointmentsAdmin,appointmentCancel,adminDashboard,deleteDoctor,allUsers}
