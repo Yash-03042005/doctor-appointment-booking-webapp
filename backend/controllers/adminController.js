@@ -69,27 +69,32 @@ const addDoctor = async (req,res)=>{
 
 }
 
-//api for admin login
 
+// API for admin login (using HttpOnly cookie)
 const loginAdmin = async (req,res)=>{
     try{
-
+      
         const {email,password} = req.body
 
         if(email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD){
+            const token = jwt.sign({email}, process.env.JWT_SECRET, { expiresIn: "1h" })
 
-            const token = jwt.sign(email+password,process.env.JWT_SECRET)
-            res.json({success:true,token})
+            // Send token in HttpOnly cookie
+            res.cookie("atoken", token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production",
+                sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+                maxAge: 60 * 60 * 1000 // 1 hour
+            })
 
+            return res.json({success:true,message:"Admin login successful"})
         }else{
-            res.json({success:false,message:"Invalid Credentials"})
+            return res.json({success:false,message:"Invalid Credentials"})
         }
 
     }catch(error){
-
         console.error(error)
         res.json({success:false,message:error.message})
-
     }
 }
 
@@ -175,8 +180,6 @@ const adminDashboard = async (req, res) => {
   }
 };
 
-
-
 const deleteDoctor = async (req, res) => {
   try {
     const { docId } = req.body;
@@ -196,7 +199,6 @@ const deleteDoctor = async (req, res) => {
   }
 };
 
-
 const allUsers = async (req, res) => {
   try {
     const users = await userModel.find({}).select("-password");
@@ -208,5 +210,46 @@ const allUsers = async (req, res) => {
 };
 
 
+// API to check admin authentication (verify cookie)
+const checkAuthAdmin = (req,res)=>{
+    try{
+        const atoken = req.cookies.atoken;
+        if(!atoken) return res.json({success:false})
 
-export {addDoctor,loginAdmin,allDoctors,appointmentsAdmin,appointmentCancel,adminDashboard,deleteDoctor,allUsers}
+        const admin = jwt.verify(atoken, process.env.JWT_SECRET)
+        if(!admin) return res.json({success:false})
+
+        res.json({success:true, admin})
+    }catch(error){
+        console.error('Error in checkAuthAdmin:', error)
+        res.status(500).json({success:false, message:'Server error'})
+    }
+}
+
+
+const logoutAdmin = async (req, res) => {
+  try {
+    // Check if the admin cookie exists
+    const atoken = req.cookies.atoken;
+
+    if (!atoken) {
+      return res.json({ success: false, message: 'No admin token found' });
+    }
+
+    // ✅ Clear the admin cookie
+    res.clearCookie('atoken', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
+    });
+
+    return res.json({ success: true, message: 'Admin logged out successfully' });
+  } catch (error) {
+    console.error('Error in logoutAdmin:', error);
+    return res.status(500).json({ success: false, message: 'Server error during logout' });
+  }
+};
+
+
+
+export {addDoctor,loginAdmin,allDoctors,appointmentsAdmin,appointmentCancel,adminDashboard,deleteDoctor,allUsers,checkAuthAdmin,logoutAdmin}

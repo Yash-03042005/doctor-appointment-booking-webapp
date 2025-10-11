@@ -6,6 +6,7 @@ import connectCloudinary from './config/cloudinary.js'
 import adminRouter from './routes/adminRoute.js'
 import doctorRouter from './routes/doctorRoute.js'
 import userRouter from './routes/userRoute.js'
+import cookieParser from 'cookie-parser';
 
 //app config
 
@@ -14,10 +15,19 @@ const port = process.env.PORT || 4000
 connectDB()
 connectCloudinary()
 
+
 //middlewares
 
-app.use(cors())
+
+const allowedOrigins = ["http://localhost:5173","http://localhost:5174"];
+
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true // ✅ allow cookies to be sent
+}));
 app.use(express.json())
+app.use(cookieParser());
+
 
 //api endpoints
 

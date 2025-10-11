@@ -48,7 +48,15 @@ const loginDoctor = async (req, res) => {
     if (isMatched) {
       const token = await jwt.sign({ id: doctor._id }, process.env.JWT_SECRET);
 
-      return res.json({ success: true, token });
+      // ✅ Send token in HttpOnly cookie
+      res.cookie("dtoken", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+        maxAge: 60 * 60 * 1000, // 1 hour
+      });
+
+      return res.json({ success: true, message: "Login successful" });
     } else {
       return res.json({ success: false, message: "Invalid credentials" });
     }
@@ -58,10 +66,11 @@ const loginDoctor = async (req, res) => {
   }
 };
 
+
 // api to get all appointments for doctor panel
 const appointmentsDoctor = async(req,res)=>{
 
-    try{
+    try{  
 
         const docId = req.docId
         console.log("doctor id in controller function:",docId)
@@ -266,5 +275,53 @@ const clearDoctorSlots = async (req, res) => {
   }
 };
 
+const checkAuth = async (req, res) => {
+  try {
+    
+    const dtoken = req.cookies.dtoken;
 
-export {changeAvailablity,doctorsList,loginDoctor,appointmentsDoctor,appointmentComplete,appointmentCancel,doctorDashboard,doctorProfile,updateDoctorProfile,clearDoctorSlots}
+    if (!dtoken) {
+      return res.json({ success: false });
+    }
+
+    // verify JWT
+    const doctor = jwt.verify(dtoken, process.env.JWT_SECRET);
+
+    if (!doctor) {
+      return res.json({ success: false });
+    }
+
+    res.json({ success: true, doctor });
+  } catch (error) {
+    console.error('Error in checkAuth:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
+
+
+const logoutDoctor = async (req, res) => {
+  try {
+    // Check if the cookie exists
+    const dtoken = req.cookies.dtoken;
+
+    if (!dtoken) {
+      return res.json({ success: false, message: 'No token found' });
+    }
+
+    // ✅ Correct way to clear the cookie
+    res.clearCookie('dtoken', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
+    });
+
+    return res.json({ success: true, message: 'Doctor logged out successfully' });
+  } catch (error) {
+    console.error('Error in logoutDoctor:', error);
+    return res.status(500).json({ success: false, message: 'Server error during logout' });
+  }
+};
+
+
+
+export {changeAvailablity,doctorsList,loginDoctor,appointmentsDoctor,appointmentComplete,appointmentCancel,doctorDashboard,doctorProfile,updateDoctorProfile,clearDoctorSlots,checkAuth,logoutDoctor}
