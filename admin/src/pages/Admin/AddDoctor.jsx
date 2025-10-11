@@ -18,7 +18,7 @@ const AddDoctor = () => {
   const [address1,setAddress1] = useState('')
   const [address2,setAddress2] = useState('')
 
-  const {backendUrl , aToken} = useContext(AdminContext)
+  const {backendUrl} = useContext(AdminContext)
 
 
   const onSubmitHandler = async (event)=>{
@@ -51,7 +51,7 @@ const AddDoctor = () => {
 
       })
 
-      const {data} = await axios.post(backendUrl + '/api/admin/add-doctor',formData,{headers:{aToken}}) 
+      const {data} = await axios.post(backendUrl + '/api/admin/add-doctor',formData,{withCredentials:true}) 
 
       if(data.success){
         toast.success(data.message)

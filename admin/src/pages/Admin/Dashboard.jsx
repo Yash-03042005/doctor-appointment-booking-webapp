@@ -9,13 +9,22 @@ const Dashboard = () => {
 
   const navigate = useNavigate();
 
-  const { aToken, getDashData, dashData } = useContext(AdminContext);
+  const { isAdminAuthenticated, getDashData, dashData } = useContext(AdminContext);
+
 
   useEffect(() => {
-    if (aToken) {
+    if (isAdminAuthenticated) {
       getDashData();
     }
-  }, [aToken]);
+  }, [isAdminAuthenticated]);
+
+  if (!isAdminAuthenticated) {
+  return (
+    <p className="text-center mt-10 text-gray-500">
+      Please login as admin to view the dashboard
+    </p>
+  );
+  }
 
   return (
     dashData && (

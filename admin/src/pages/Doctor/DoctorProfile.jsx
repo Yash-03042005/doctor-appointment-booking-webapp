@@ -8,7 +8,7 @@ import axios from 'axios'
 
 const DoctorProfile = () => {
 
-  const {dToken,profileData,setProfileData,getProfileData,backendUrl_doctor} = useContext(DoctorContext)
+  const {isDoctorAuthenticated,profileData,setProfileData,getProfileData,backendUrl_doctor} = useContext(DoctorContext)
 
   const [isEdit , setIsEdit] = useState(false)
 
@@ -24,7 +24,7 @@ const DoctorProfile = () => {
         available: profileData.available
       }
 
-      const {data} = await axios.post(backendUrl_doctor + '/api/doctor/upadate-profile',updateData,{headers:{dToken}})
+      const {data} = await axios.post(backendUrl_doctor + '/api/doctor/upadate-profile',updateData,{withCredentials:true})
       if(data.success){
         toast.success(data.message)
         setIsEdit(false)
@@ -42,10 +42,10 @@ const DoctorProfile = () => {
   }
 
   useEffect(()=>{
-    if(dToken){
+    if(isDoctorAuthenticated){
       getProfileData()
     }
-  },[dToken])
+  },[isDoctorAuthenticated])
 
 
   return profileData &&  (

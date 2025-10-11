@@ -12,8 +12,6 @@ dist
 dist-ssr
 *.local
 nginx.config
-Dockerfile
-.dockerignore
 
 # Editor directories and files
 .vscode/*

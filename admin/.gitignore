@@ -12,9 +12,6 @@ dist
 dist-ssr
 *.local
 
-Dockerfile
-.dockerignore
-
 node_modules
 
 # Editor directories and files

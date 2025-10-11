@@ -4,15 +4,15 @@ import { assets } from '../../assets/assets'
 import { useParams } from 'react-router-dom'
 
 const DoctorProfilePage = () => {
-  const { doctors, aToken, getAllDoctors } = useContext(AdminContext)
+  const { doctors, getAllDoctors, isAdminAuthenticated } = useContext(AdminContext)
   const { docId } = useParams()
   const [docInfo, setDocInfo] = useState(null)
 
   useEffect(() => {
-    if (aToken) {
+    if (isAdminAuthenticated) {
       getAllDoctors()
     }
-  }, [aToken])
+  }, [isAdminAuthenticated])
 
   useEffect(() => {
     if (doctors && doctors.length > 0) {
@@ -22,6 +22,14 @@ const DoctorProfilePage = () => {
       }
     }
   }, [doctors, docId])
+
+  if (!isAdminAuthenticated) {
+    return (
+      <p className="text-center mt-10 text-gray-500">
+        Please login as admin to view doctor details
+      </p>
+    )
+  }
 
   return (
     <div className="p-6">

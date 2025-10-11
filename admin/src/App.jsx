@@ -17,12 +17,14 @@ import DoctorProfilePage from "./pages/Admin/DoctorProfilePage.jsx"
 import AllUsers from './pages/Admin/AllUsers.jsx';
 
 
+
 const App = () => {
 
-  const {aToken} = useContext(AdminContext)
-  const {dToken} = useContext(DoctorContext)
+  const { isAdminAuthenticated } = useContext(AdminContext);
 
-  return aToken ||dToken  ? (
+  const { isDoctorAuthenticated } = useContext(DoctorContext)
+
+  return isAdminAuthenticated ||isDoctorAuthenticated  ? (
     <div className='bg-[#F8F9FD]'>
 
       <ToastContainer/>

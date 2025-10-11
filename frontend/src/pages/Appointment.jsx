@@ -10,7 +10,7 @@ const Appointment = () => {
 
   const {docId} = useParams();
 
-  const {doctors,token,backendUrl,getDoctorsData} = useContext(AppContext);
+  const {doctors,backendUrl,getDoctorsData,isLoggedIn} = useContext(AppContext);
 
   const daysOfWeek = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
 
@@ -92,7 +92,7 @@ const Appointment = () => {
 
   const  bookAppointment = async()=>{
 
-    if(!token){
+    if(!isLoggedIn){
       toast.warn('Login to book appointment')
       return navigate('/login')
     }
@@ -106,7 +106,7 @@ const Appointment = () => {
 
       const slotDate = day +"_"+ month +"_" + year
 
-      const {data} = await axios.post(backendUrl + '/api/user/book-appointment',{docId,slotDate,slotTime},{headers:{token}})
+      const {data} = await axios.post(backendUrl + '/api/user/book-appointment',{docId,slotDate,slotTime},{withCredentials:true})
 
       if(data.success){
         toast.success(data.message)

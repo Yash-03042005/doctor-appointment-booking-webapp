@@ -6,4 +6,5 @@ frontend/.env
 backend/.env
 admin/.env
 
-docker-compose.yml 
+
+

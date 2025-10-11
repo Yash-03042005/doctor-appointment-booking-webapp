@@ -5,14 +5,14 @@ import { assets } from '../../assets/assets'
 
 const AllAppointments = () => {
 
-  const { aToken, appointments, getAllAppointments, cancelAppointment } = useContext(AdminContext)
+  const { appointments, getAllAppointments, cancelAppointment ,isAdminAuthenticated } = useContext(AdminContext)
   const { calculateAge, slotDateFormat } = useContext(AppContext)
 
   useEffect(() => {
-    if (aToken) {
+    if (isAdminAuthenticated) {
       getAllAppointments()
     }
-  }, [aToken])
+  }, [isAdminAuthenticated])
 
   return (
     <div className='w-full max-w-6xl m-5'>

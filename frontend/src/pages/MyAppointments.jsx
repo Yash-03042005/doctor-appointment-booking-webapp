@@ -7,7 +7,7 @@ import {useNavigate} from 'react-router-dom'
 
 const MyAppointments = () => {
 
-  const {backendUrl,token,getDoctorsData} = useContext(AppContext)
+  const {backendUrl,isLoggedIn,getDoctorsData} = useContext(AppContext)
   const [appointments,setAppointments] = useState([])
 
   const navigate = useNavigate()
@@ -23,7 +23,7 @@ const MyAppointments = () => {
   const getUserAppointments = async()=>{
 
     try{
-      const {data} = await axios.get(backendUrl + '/api/user/appointments',{headers:{token}})
+      const {data} = await axios.get(backendUrl + '/api/user/appointments',{withCredentials:true})
       if(data.success){
         setAppointments(data.appointments.reverse())
         console.log(data.appointments);
@@ -41,7 +41,7 @@ const MyAppointments = () => {
 
     try{
 
-      const {data} = await axios.post(backendUrl + '/api/user/cancel-appointment',{appointmentId},{headers:{token}})
+      const {data} = await axios.post(backendUrl + '/api/user/cancel-appointment',{appointmentId},{withCredentials:true})
 
       if(data.success){
         toast.success(data.message)
@@ -73,7 +73,7 @@ const MyAppointments = () => {
       handler:async(response)=>{
 
         try{
-          const {data} = await axios.post(backendUrl + '/api/user/verify-razorpay',response,{headers:{token}})
+          const {data} = await axios.post(backendUrl + '/api/user/verify-razorpay',response,{withCredentials:true})
           if(data.success){
             getUserAppointments()
             navigate('/my-appointments')
@@ -96,7 +96,7 @@ const MyAppointments = () => {
 
     try{
 
-      const {data} = await axios.post(backendUrl + '/api/user/payment-razorpay',{appointmentId},{headers:{token}})
+      const {data} = await axios.post(backendUrl + '/api/user/payment-razorpay',{appointmentId},{withCredentials:true})
 
       if(data.success){
         initPay(data.order)
@@ -110,10 +110,10 @@ const MyAppointments = () => {
   }
 
   useEffect(()=>{
-    if(token){
+    if(isLoggedIn){
       getUserAppointments()
     }
-  },[token])
+  },[isLoggedIn])
 
   return (
     <div>
@@ -152,7 +152,6 @@ const MyAppointments = () => {
     </div>
   )
 }
-
 
 
 

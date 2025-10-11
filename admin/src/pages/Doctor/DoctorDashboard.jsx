@@ -1,19 +1,15 @@
-import React from "react";
-import { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { DoctorContext } from "../../context/DoctorContext";
-import { useEffect } from "react";
-import { assets } from "../../assets/assets";
 import { AppContext } from "../../context/AppContext";
+import { assets } from "../../assets/assets";
 
 const DoctorDashboard = () => {
-  const { dToken, getDashData, dashData, setDashData,cancelAppointment,completeAppointment } = useContext(DoctorContext);
+  const { getDashData, dashData } = useContext(DoctorContext);
   const { slotDateFormat } = useContext(AppContext);
 
   useEffect(() => {
-    if (dToken) {
-      getDashData();
-    }
-  }, [dToken]);
+    getDashData(); // HttpOnly cookie will be sent automatically
+  }, []);
 
   return (
     dashData && (
@@ -41,6 +37,7 @@ const DoctorDashboard = () => {
             </div>
           </div>
         </div>
+
         <div className="bg-white">
           <div className="flex items-center gap-2.5 px-4 py-4 mt-10 rounded-t border">
             <img src={assets.list_icon} alt="" />
@@ -50,7 +47,11 @@ const DoctorDashboard = () => {
             {dashData?.latestAppointments?.length > 0 ? (
               dashData.latestAppointments.map((item, index) => (
                 <div key={index} className="flex items-center gap-4 p-4 border-b">
-                  <img className="w-14 h-14 object-cover rounded-full" src={item.docData?.image} alt="Doctor" />
+                  <img
+                    className="w-14 h-14 object-cover rounded-full"
+                    src={item.docData?.image}
+                    alt="Doctor"
+                  />
                   <div className="flex-1">
                     <p className="font-semibold">{item.docData?.name}</p>
                     <p className="text-sm text-gray-500">{slotDateFormat(item.slotDate)}</p>
@@ -61,7 +62,7 @@ const DoctorDashboard = () => {
                     <p className="text-green-500 text-xs font-medium">Completed</p>
                   ) : (
                     <div className="flex">
-                      <p className="text-green-500 text-xs font-medium">Pending</p>
+                      <p className="text-yellow-500 text-xs font-medium">Pending</p>
                     </div>
                   )}
                 </div>

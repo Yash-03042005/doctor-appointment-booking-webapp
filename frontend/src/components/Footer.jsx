@@ -9,7 +9,7 @@ const Footer = () => {
     <div className="px-5 md:px-10 bg-white">
       
       {/* --------- main footer content --------- */}
-      <div className="flex flex-col md:grid md:grid-cols-[3fr_1.5fr_1.5fr] gap-12 my-10 mt-20 text-sm">
+      <div className="flex flex-col md:grid md:grid-cols-[3fr_1.5fr_1.5fr] gap-12 my-10 mt-20 text-[14px] md:text-[15px]">
 
         {/* Left section */}
         <div className="text-center md:text-left">
@@ -23,7 +23,7 @@ const Footer = () => {
 
         {/* Middle section */}
         <div className="text-center md:text-left">
-          <p className="text-lg font-semibold mb-4">Explore</p>
+          <p className="text-base md:text-lg font-semibold mb-4">Explore</p>
           <ul className="flex flex-col gap-2 text-gray-600">
             <li className="cursor-pointer hover:text-primary transition" onClick={() => { navigate('/'); scrollTo(0, 0); }}>Home</li>
             <li className="cursor-pointer hover:text-primary transition" onClick={() => { navigate('/about'); scrollTo(0, 0); }}>About us</li>
@@ -34,7 +34,7 @@ const Footer = () => {
 
         {/* Right section */}
         <div className="text-center md:text-left">
-          <p className="text-lg font-semibold mb-4">Get in Touch</p>
+          <p className="text-base md:text-lg font-semibold mb-4">Get in Touch</p>
           <ul className="flex flex-col gap-2 text-gray-600">
             <li>📞 +91 8530737367</li>
             <li>✉️ support@prescripto.com</li>

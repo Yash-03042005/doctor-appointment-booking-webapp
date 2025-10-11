@@ -2,13 +2,13 @@ import React, { useContext, useEffect } from "react";
 import { AdminContext } from "../../context/AdminContext";
 
 const AllUsers = () => {
-  const { aToken, users, getAllUsers } = useContext(AdminContext);
+  const { users, getAllUsers, isAdminAuthenticated } = useContext(AdminContext);
 
   useEffect(() => {
-    if (aToken) {
+    if (isAdminAuthenticated) {
       getAllUsers();
     }
-  }, [aToken]);
+  }, [isAdminAuthenticated]);
 
   return (
     <div className="w-full max-w-6xl m-5">
@@ -28,7 +28,7 @@ const AllUsers = () => {
         </div>
 
         {/* Table Rows */}
-        {users && users.length > 0 ? (
+        {users?.length > 0 ? (
           users.map((user, index) => (
             <div
               key={user._id}
