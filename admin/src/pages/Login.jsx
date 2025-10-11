@@ -34,12 +34,14 @@ const Login = () => {
             } else {
                 // Doctor login using HttpOnly cookie
                 const { data } = await axios.post(
+                    
                     backendUrl_doctor + '/api/doctor/login',
                     { email, password },
                     { withCredentials: true } // ✅ ensures HttpOnly cookie is set
                 );
 
                 if (data.success) {
+
                     toast.success("Doctor login successful");
                     setIsDoctorAuthenticated(true);
                     navigate('/doctor-dashboard')

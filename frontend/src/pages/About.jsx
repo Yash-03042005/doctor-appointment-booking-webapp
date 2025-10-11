@@ -21,7 +21,7 @@ const About = () => {
           <p>
             Our mission is to bridge the gap between healthcare providers and patients using technology that’s fast, secure, and easy to use.
           </p>
-          <b className='text-gray-800 text-[16px] md:text-[17px]'>Our Vision</b>
+          <b className='text-gray-800 text-[16px] md:text-[17px] text-center md:text-left'>Our Vision</b>
           <p>
             Our vision is to create a world where accessing quality healthcare is as easy as a few clicks.
             At Prescripto, we strive to build a connected digital healthcare ecosystem that empowers patients, supports doctors, 

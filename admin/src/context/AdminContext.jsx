@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect } from "react";
-import axios, { CanceledError } from 'axios';
+import axios from 'axios';
 import { toast } from 'react-toastify';
 
 export const AdminContext = createContext();
@@ -9,6 +9,7 @@ const AdminContextProvider = (props) => {
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
+  const [loadingAdmin, setLoadingAdmin] = useState(true); // added for refresh issue
   const [doctors, setDoctors] = useState([]);
   const [appointments, setAppointments] = useState([]);
   const [dashData, setDashData] = useState([]);
@@ -169,11 +170,12 @@ const AdminContextProvider = (props) => {
     }
   };
 
-  
+
   // -----------------------------
   // Check if admin is authenticated (run on app mount)
   // -----------------------------
   const checkAuth = async () => {
+    setLoadingAdmin(true);
     try {
 
       const { data } = await axios.get(`${backendUrl}/api/admin/check-auth`, {
@@ -181,12 +183,16 @@ const AdminContextProvider = (props) => {
       });
       
       if(data.success){
-        setIsAdminAuthenticated(data.success);
+        setIsAdminAuthenticated(true);
+      } else {
+        setIsAdminAuthenticated(false);
       }
 
     } catch (error) {
       console.error(error);
       setIsAdminAuthenticated(false);
+    } finally {
+      setLoadingAdmin(false);
     }
   };
 
@@ -198,6 +204,7 @@ const AdminContextProvider = (props) => {
   const value = {
     isAdminAuthenticated,
     setIsAdminAuthenticated,
+    loadingAdmin, // added here
     doctors,
     getAllDoctors,
     appointments,

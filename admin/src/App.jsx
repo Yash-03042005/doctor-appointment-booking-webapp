@@ -14,19 +14,25 @@ import DoctorProfile from './pages/Doctor/DoctorProfile.jsx';
 import DoctorAppointments from './pages/Doctor/DoctorAppointments.jsx';
 import DoctorDashboard from './pages/Doctor/DoctorDashboard.jsx';
 import DoctorProfilePage from "./pages/Admin/DoctorProfilePage.jsx"
-import AllUsers from './pages/Admin/AllUsers.jsx';
-
-
+import AllUsers from './pages/Admin/AllUsers.jsx'
 
 const App = () => {
 
-  const { isAdminAuthenticated } = useContext(AdminContext);
+  const { isAdminAuthenticated, loadingAdmin } = useContext(AdminContext);
+  const { isDoctorAuthenticated, loadingDoctor } = useContext(DoctorContext)
 
-  const { isDoctorAuthenticated } = useContext(DoctorContext)
+  const loading = loadingAdmin || loadingDoctor;
 
-  return isAdminAuthenticated ||isDoctorAuthenticated  ? (
+  if (loading) {
+    return (
+      <div className='min-h-screen flex items-center justify-center'>
+        <div className='spinner'></div>
+      </div>
+    )
+  }
+
+  return isAdminAuthenticated || isDoctorAuthenticated  ? (
     <div className='bg-[#F8F9FD]'>
-
       <ToastContainer/>
       <Navbar/>
       <div className='flex items-start'>
@@ -42,11 +48,9 @@ const App = () => {
           <Route path="/all-users" element={<AllUsers />} />
 
           {/*---------------------doctor routes------------*/}
-
           <Route path='/doctor-dashboard' element={<DoctorDashboard/>}/>
           <Route path='/doctor-profile' element={<DoctorProfile/>}/>
           <Route path='/doctor-appointments' element={<DoctorAppointments/>}/>
-
         </Routes>
       </div>
     </div>
@@ -59,4 +63,4 @@ const App = () => {
   )
 }
 
-export default App
+export default App;

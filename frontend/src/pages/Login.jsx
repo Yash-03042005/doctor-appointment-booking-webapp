@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const { backendUrl, loadUserProfileData, isLoggedIn } = useContext(AppContext);
+  const { backendUrl, loadUserProfileData } = useContext(AppContext);
   const navigate = useNavigate();
 
   const [state, setState] = useState("Sign Up"); // Sign Up or Login
@@ -46,13 +46,6 @@ const Login = () => {
       toast.error(error.message);
     }
   };
-
-  // Redirect to home if user is logged in
-  useEffect(() => {
-    if (isLoggedIn) {
-      navigate("/");
-    }
-  }, [isLoggedIn, navigate]);
 
   return (
     <form onSubmit={onSubmitHandler} className="min-h-[80vh] flex items-center">

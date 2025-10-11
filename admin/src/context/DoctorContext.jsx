@@ -1,7 +1,6 @@
-import { useState, createContext } from "react";
+import { useState, createContext, useEffect } from "react";
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { useEffect } from "react";
 
 export const DoctorContext = createContext();
 
@@ -12,6 +11,7 @@ const DoctorContextProvider = (props) => {
   const [dashData, setDashData] = useState(false);
   const [profileData, setProfileData] = useState(false);
   const [isDoctorAuthenticated, setIsDoctorAuthenticated] = useState(false);
+  const [loadingDoctor, setLoadingDoctor] = useState(true); // added
 
   // Get all appointments for doctor
   const getAppointments = async () => {
@@ -108,6 +108,7 @@ const DoctorContextProvider = (props) => {
   };
   
   const checkAuth = async () => {
+    setLoadingDoctor(true);
     try {
       const { data } = await axios.get(backendUrl_doctor + '/api/doctor/check-auth', {
         withCredentials: true, // sends HttpOnly cookie
@@ -117,16 +118,14 @@ const DoctorContextProvider = (props) => {
       toast.error(error.message);
       console.error(error);
       setIsDoctorAuthenticated(false);
+    } finally {
+      setLoadingDoctor(false);
     }
   };
 
   useEffect(()=>{
-
     checkAuth(); //run on app mount
-
   },[])
-
-
 
   const value = {
     backendUrl_doctor,
@@ -142,8 +141,8 @@ const DoctorContextProvider = (props) => {
     setProfileData,
     getProfileData,
     isDoctorAuthenticated,
-    setIsDoctorAuthenticated
-
+    setIsDoctorAuthenticated,
+    loadingDoctor // added here
   };
 
   return (

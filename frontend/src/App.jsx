@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Route, Routes } from 'react-router-dom';
 
 // ✅ Import all components used in the routes
@@ -13,8 +13,25 @@ import Appointment from '../src/pages/Appointment';
 import NavBar from './components/Navbar.jsx';
 import Footer from './components/Footer.jsx';
  import { ToastContainer } from 'react-toastify';
+import { AppContext } from './context/AppContext.jsx';
 
 const App = () => {
+
+  const { loadingUser } = useContext(AppContext);
+
+
+
+
+  if (loadingUser) {
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="spinner"></div>
+    </div>
+  );
+}
+
+
+
   return (
     <div className='mx-4 sm:mx-[10%]'>
 

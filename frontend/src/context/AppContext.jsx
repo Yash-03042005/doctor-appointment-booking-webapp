@@ -8,11 +8,13 @@ const AppContextProvider = (props) => {
   const [doctors, setDoctors] = useState([]);
   const [userData, setUserData] = useState(null); // store user data
   const [isLoggedIn, setIsLoggedIn] = useState(false); // track login status
+  const [loadingUser, setLoadingUser] = useState(true); // new state for loading spinner
 
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
   // Load user profile from backend using HTTP-only cookie
   const loadUserProfileData = async () => {
+    setLoadingUser(true); // start loading
     try {
       const { data } = await axios.get(`${backendUrl}/api/user/get-profile`, {
         withCredentials: true, // ✅ important for cookie
@@ -29,6 +31,8 @@ const AppContextProvider = (props) => {
       console.error(error);
       setUserData(null);
       setIsLoggedIn(false);
+    } finally {
+      setLoadingUser(false); // stop loading
     }
   };
 
@@ -73,6 +77,7 @@ const AppContextProvider = (props) => {
     isLoggedIn,
     setIsLoggedIn,
     logoutUser,
+    loadingUser, // added here
   };
 
   return <AppContext.Provider value={value}>{props.children}</AppContext.Provider>;
