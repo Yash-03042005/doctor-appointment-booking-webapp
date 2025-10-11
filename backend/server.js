@@ -19,7 +19,7 @@ connectCloudinary()
 //middlewares
 
 
-const allowedOrigins = ["http://localhost:5173","http://localhost:5174"];
+const allowedOrigins = ["http://localhost:5173","http://localhost:5174","https://doctor-appointment-frontend-7iml.onrender.com","https://doctor-appointment-admin-xs82.onrender.com"];
 
 app.use(cors({
   origin: allowedOrigins,
