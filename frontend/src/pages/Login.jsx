@@ -38,6 +38,7 @@ const Login = () => {
       if (data.success) {
         toast.success(`${state} successful !!!`);
         await loadUserProfileData(); // ✅ update context with userData & isLoggedIn
+        navigate('/')  // ✅ redirect user to homepage after login/signup
       } else {
         toast.error(data.message);
       }

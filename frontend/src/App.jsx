@@ -20,8 +20,6 @@ const App = () => {
   const { loadingUser } = useContext(AppContext);
 
 
-
-
   if (loadingUser) {
   return (
     <div className="min-h-screen flex items-center justify-center">
@@ -29,7 +27,6 @@ const App = () => {
     </div>
   );
 }
-
 
 
   return (
