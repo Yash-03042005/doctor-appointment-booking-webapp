@@ -19,16 +19,16 @@ const registerUser = async (req, res) => {
       return res.json({ success: false, message: "Missing Details" });
     }
 
+    if (!validator.isEmail(email)) {
+      return res.json({ success: false, message: "Enter a valid email" });
+    }
+
     const userExists = await userModel.findOne({ email });
 
     if (userExists) {
 
       return res.json({ success: false, message: "Use Different email user already exists with this email" });
 
-    }
-
-    if (!validator.isEmail(email)) {
-      return res.json({ success: false, message: "Enter a valid email" });
     }
 
     if (password.length < 8) {
@@ -110,8 +110,9 @@ const loginUser = async (req, res) => {
 //api to get the user profile details
 const getProfile = async (req, res) => {
   try {
+
     const userId = req.userId;
-    console.log("userId in the controller function:", userId);
+
     const userData = await userModel.findById(userId).select("-password");
     if (!userData) {
       return res.json({ success: false, message: "User not found" });
@@ -270,6 +271,7 @@ const cancelAppointment = async (req, res) => {
   }
 };
 
+
 const razorpayInstance = new razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_SECRET_KEY,
@@ -278,6 +280,7 @@ const razorpayInstance = new razorpay({
 //api to make the payment of the appointment
 const paymentRazorpay = async (req, res) => {
   try {
+    
     const { appointmentId } = req.body;
     const appointmentData = await appointmentModel.findById(appointmentId);
 
@@ -326,6 +329,7 @@ const verifyRazorpay = async (req, res) => {
 
 
 const logoutUser = async (req, res) => {
+
   try {
     // ✅ Clear the same cookie that was set during login
     res.clearCookie("token", {
@@ -339,6 +343,8 @@ const logoutUser = async (req, res) => {
     console.error("Logout Error:", error);
     res.status(500).json({ success: false, message: error.message });
   }
+
+
 };
 
 export {

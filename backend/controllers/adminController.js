@@ -6,8 +6,8 @@ import jwt from "jsonwebtoken"
 import appointmentModel from '../models/appointmentModel.js';
 import userModel from '../models/userModel.js';
 
-//api for adding doctor
 
+//api for adding doctor
 const addDoctor = async (req,res)=>{
 
     try{
@@ -115,7 +115,7 @@ const allDoctors = async(req,res)=>{
 }
 
 const appointmentsAdmin = async(req,res)=>{
-    console.log("inside appointmentsAdmin");
+    
 
     try{
 

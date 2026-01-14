@@ -66,7 +66,7 @@ const MyAppointments = () => {
       key:import.meta.env.VITE_RAZORPAY_KEY_ID,
       amount:order.amount,
       currency:order.currency,
-      name:"Appointment Payment Integration",
+      name:"Appointment Payment",
       description:"Appointment Payment",
       order_id :order.id,
       receipt:order.receipt,

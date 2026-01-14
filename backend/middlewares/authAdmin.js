@@ -5,8 +5,8 @@ const authAdmin = async (req, res, next) => {
   try {
     // ✅ Read token from cookie named 'atoken'
     const atoken = req.cookies.atoken
-
-
+   
+    
     if (!atoken) {
       return res.status(401).json({ success: false, message: "Not authorized, login again" })
     }

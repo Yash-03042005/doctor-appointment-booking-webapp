@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import appointmentModel from "../models/appointmentModel.js"
 
+
 const changeAvailablity  = async (req,res)=>{
 
     try{
@@ -73,9 +74,7 @@ const appointmentsDoctor = async(req,res)=>{
     try{  
 
         const docId = req.docId
-        console.log("doctor id in controller function:",docId)
         const appointments = await appointmentModel.find({docId})
-        console.log(appointments)
         res.json({success:true,appointments})
 
     }catch(error){
@@ -136,7 +135,7 @@ const appointmentCancel = async (req, res) => {
 
     const appointmentData = await appointmentModel.findById(appointmentId);
 
-    if (!appointmentData) {
+    if (!appointmentData){
       return res.json({ success: false, message: "Appointment not found" });
     }
 

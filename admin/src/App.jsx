@@ -16,6 +16,7 @@ import DoctorDashboard from './pages/Doctor/DoctorDashboard.jsx';
 import DoctorProfilePage from "./pages/Admin/DoctorProfilePage.jsx"
 import AllUsers from './pages/Admin/AllUsers.jsx'
 
+
 const App = () => {
 
   const { isAdminAuthenticated, loadingAdmin } = useContext(AdminContext);
