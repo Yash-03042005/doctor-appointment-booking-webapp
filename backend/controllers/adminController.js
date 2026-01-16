@@ -7,6 +7,7 @@ import appointmentModel from '../models/appointmentModel.js';
 import userModel from '../models/userModel.js';
 
 
+
 //api for adding doctor
 const addDoctor = async (req,res)=>{
 
@@ -250,6 +251,91 @@ const logoutAdmin = async (req, res) => {
   }
 };
 
+// api for updating doctor
+const updateDoctor = async (req, res) => {
+  try {
+
+    const {
+      docId,
+      name,
+      email,
+      speciality,
+      degree,
+      experience,
+      about,
+      fees,
+      address
+    } = req.body
+
+    const imageFile = req.file
+
+    // -------------------------
+    // basic validation
+    // -------------------------
+    if (!docId) {
+      return res.json({ success: false, message: "Doctor ID is required" })
+    }
+
+    if (!name || !email || !speciality || !degree || !experience || !about || !fees || !address) {
+      return res.json({ success: false, message: "Missing Details" })
+    }
+
+    // validate email
+    if (!validator.isEmail(email)) {
+      return res.json({ success: false, message: "Please enter a valid email" })
+    }
+
+    // -------------------------
+    // find doctor
+    // -------------------------
+    const doctor = await doctorModel.findById(docId)
+
+    if (!doctor) {
+      return res.json({ success: false, message: "Doctor not found" })
+    }
+
+    // -------------------------
+    // update image (optional)
+    // -------------------------
+    let imageUrl = doctor.image
+
+    if (imageFile) {
+      const imageUpload = await cloudinary.uploader.upload(
+        imageFile.path,
+        { resource_type: "image" }
+      )
+      imageUrl = imageUpload.secure_url
+    }
+
+    // -------------------------
+    // update doctor data
+    // -------------------------
+    doctor.name = name
+    doctor.email = email
+    doctor.speciality = speciality
+    doctor.degree = degree
+    doctor.experience = experience
+    doctor.about = about
+    doctor.fees = fees
+    doctor.address = JSON.parse(address)
+    doctor.image = imageUrl
+
+    await doctor.save()
+
+    res.json({
+      success: true,
+      message: "Doctor Updated Successfully..!!!",
+      doctor
+    })
+
+  } catch (error) {
+    console.error(error)
+    res.json({ success: false, message: error.message })
+  }
+}
 
 
-export {addDoctor,loginAdmin,allDoctors,appointmentsAdmin,appointmentCancel,adminDashboard,deleteDoctor,allUsers,checkAuthAdmin,logoutAdmin}
+
+
+
+export {addDoctor,loginAdmin,allDoctors,appointmentsAdmin,appointmentCancel,adminDashboard,deleteDoctor,allUsers,checkAuthAdmin,logoutAdmin , updateDoctor}

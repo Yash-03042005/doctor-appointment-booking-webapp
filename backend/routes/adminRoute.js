@@ -1,8 +1,8 @@
 import express from 'express'
-import { addDoctor ,loginAdmin,allDoctors, appointmentsAdmin, appointmentCancel,adminDashboard, deleteDoctor, allUsers, checkAuthAdmin, logoutAdmin } from "../controllers/adminController.js"
+import { addDoctor ,loginAdmin,allDoctors, appointmentsAdmin, appointmentCancel,adminDashboard, deleteDoctor, allUsers, checkAuthAdmin, logoutAdmin, updateDoctor } from "../controllers/adminController.js"
 import upload from "../middlewares/multer.js"
 import authAdmin from '../middlewares/authAdmin.js'
-import { changeAvailablity } from '../controllers/doctorController.js'
+import { changeAvailablity, updateDoctorProfile } from '../controllers/doctorController.js'
 
 const adminRouter = express.Router()
 
@@ -17,6 +17,8 @@ adminRouter.post('/delete-doctor',authAdmin,deleteDoctor)
 adminRouter.get('/all-users',allUsers)
 adminRouter.get("/check-auth", checkAuthAdmin);
 adminRouter.post('/logout',logoutAdmin);
+adminRouter.post('/update-doctor',upload.single('image'),updateDoctor)
+
 
 export default adminRouter
 
